@@ -1,0 +1,5 @@
+name: OPStaff
+version: ${project.version}
+main: net.buzz.OPStaff
+author: Buzz
+depends: [LuckPerms]

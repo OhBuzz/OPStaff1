@@ -1,0 +1,13 @@
+groups:
+  - owner
+  - co-owner
+  - manager
+  - developer
+  - admin
+  - moderator
+  - helper
+
+servers:
+  - prison
+  - hub
+  - dev

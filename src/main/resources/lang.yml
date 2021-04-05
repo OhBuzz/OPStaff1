@@ -1,0 +1,28 @@
+
+StaffChat:
+  usage: '&c[!] &cStaff Chat Usage: /sc <message>'
+  format: '&8(&aStaff&8) &8(&a{server}&8) &f{user} &8({rank}&8) &8> &b{message}'
+
+SeniorChat:
+  usage: '&c[!] Senior Chat Usage: /src <message>'
+  format: '&8(&9Senior Staff&8) &8(&c{server}&8) &f{user} &8({rank}&8) &8&b{message}'
+
+Events:
+  staffConnect: '&8(&dStaff&8) &f{user} &7has connected to &f{server}&7.'
+  staffLeave: '&8(&dStaff&8) &f{user} &7has disconnected from &f{server}&7.'
+  toggle: '&8(&dStaff&8) &7You have &f{toggle} &7your staff join/leave messages!'
+
+Staff:
+  title: '&8&m----&r &f&lGlobal Staff &8&m----&r'
+  server: '&a&l{server} &7({COUNT})'
+  staffMember: ' {rank} &f{user} &7[{playtime}]'
+  NoneOnline: ' &cN/A'
+
+StaffHide:
+  Hide: '&8(&dStaff&8) &cYou have &f{toggle} &cyour visibility on the staff list.'
+
+Errors:
+  NoPermission: "&c[!] You do not have permission to use this command."
+  invalidUsage: '&c[!] Invalid usage of command.'
+
+configReloaded: "&8(&dStaff&8) &cYou have successfully reloaded the configuration."
