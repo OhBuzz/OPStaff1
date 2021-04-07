@@ -63,12 +63,13 @@ public class Staff extends Command {
                             continue;
                         long loginTime = this.instance.getStaffManager().getLoginTime(player.getUniqueId());
                         sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.staffMember")
-                                .replace("{rank}", metaData.getPrefix()
-                                        .replace("[", "")
-                                        .replace("]", "")
-                                        .replace(" ", ""))
+                                .replace("{rank}", metaData.getPrefix())
                                 .replace("{user}", player.getDisplayName())
-                                .replace("{playtime}", (loginTime > 0L) ? TimeUtil.formatDHMS(System.currentTimeMillis() - loginTime) : "N/A"))));
+                                .replace("{playtime}", (loginTime > 0L) ? TimeUtil.formatDHMS(System.currentTimeMillis() - loginTime) : "N/A")
+                        .replace("ForumsManager", "Forums-Manager")
+                        .replace("StaffManager", "Staff-Manager")
+                        .replace("SupportManager", "Support-Manager")
+                        .replace("OperationsManager", "Operations"))));
                     }
                 }
                 sender.sendMessage((BaseComponent)new TextComponent(" "));

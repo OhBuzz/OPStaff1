@@ -38,7 +38,11 @@ public class StaffChat extends Command {
                                     .replace("{player}", player.getName())
                                     .replace("{server}", player.getServer().getInfo().getName())
                                     .replace("{rank}", this.instance.getStaffManager().getPrefix(player))
-                                    .replace("{message}", message.toString()));
+                                    .replace("{message}", message.toString())
+                                    .replace("ForumsManager", "Forums-Manager")
+                                    .replace("StaffManager", "Staff-Manager")
+                                    .replace("SupportManager", "Support-Manager")
+                                    .replace("OperationsManager", "Operations"));
                     }
                 }
             } else {

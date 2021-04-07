@@ -24,7 +24,6 @@ public class StaffListeners implements Listener {
     @EventHandler
     public void StaffConnect(ServerConnectEvent event) {
         ProxiedPlayer player = event.getPlayer();
-        try {
             if(this.instance.toggle.contains(player)) {
                 return;
             }
@@ -35,39 +34,20 @@ public class StaffListeners implements Listener {
                         .replace("{user}", player.getName())
                         .replace("{server}", String.valueOf(event.getTarget().getName()))));
             }
-        } catch (NullPointerException nullPointerException) {
-            nullPointerException.printStackTrace();
-        }
     }
 
     @EventHandler
     public void StaffLeave(ServerDisconnectEvent event) {
         ProxiedPlayer player = event.getPlayer();
-        try {
-            for (ProxiedPlayer online : ProxyServer.getInstance().getPlayers()) {
-                if (player.hasPermission("opcraft.staff") &&
-                online.hasPermission("opcraft.staff")) {
-                    if (this.instance.toggle.contains(player))
-                        return;
+        if(this.instance.toggle.contains(player)) {
+            return;
+        }
+        final boolean isStaff = player.hasPermission("opcraft.staff");
+        if(isStaff) {
+            ProxyServer.getInstance().getPlayers().forEach(online ->
                     online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffLeave"))
                             .replace("{user}", player.getName())
-                            .replace("{server}", String.valueOf(event.getTarget().getName())));
-                }
-            }
-        } catch (NullPointerException nullPointerException) {
-            nullPointerException.printStackTrace();
-        }
-    }
-
-    @EventHandler
-    public void ToggleJoin(ServerConnectEvent event) {
-        ProxiedPlayer player = event.getPlayer();
-        try {
-            if (player.hasPermission("opcraft.admin")) {
-                this.instance.toggle.add(player);
-            }
-        } catch (NullPointerException nullPointerException) {
-            nullPointerException.printStackTrace();
+                            .replace("{server}", String.valueOf(event.getTarget().getName()))));
         }
     }
 
