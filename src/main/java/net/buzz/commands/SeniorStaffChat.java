@@ -6,6 +6,8 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.ArrayList;
+
 public class SeniorStaffChat extends Command {
     private final OPStaff instance;
 
@@ -18,6 +20,9 @@ public class SeniorStaffChat extends Command {
         if (sender instanceof ProxiedPlayer) {
             ProxiedPlayer player = (ProxiedPlayer) sender;
             if (sender.hasPermission("opcraft.admin")) {
+                if (AdminToggle.srtoggle.contains(player)) {
+                    return;
+                }
                 if (args.length == 0) {
                     sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("SeniorChat.usage")));
                 } else {
@@ -32,17 +37,25 @@ public class SeniorStaffChat extends Command {
                         message.append(part);
                         b++;
                     }
+                    if (AdminToggle.srtoggle.contains(player)) {
+                        return;
+                    }
                     for (ProxiedPlayer online : this.instance.getProxy().getPlayers()) {
-                        if (online.hasPermission("opstaff.admin"))
+                        if (AdminToggle.srtoggle.contains(online)) {
+                            sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("AdminToggle.UsedToggled"))
+                            .replace("{mode}", "Senior Staff Chat"));
+                            return;
+                        }
+                        if (online.hasPermission("opcraft.admin") && (!AdminToggle.srtoggle.contains(player)))
                             online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("SeniorChat.format"))
                                     .replace("{player}", player.getName())
                                     .replace("{server}", player.getServer().getInfo().getName())
-                                    .replace("{rank}", this.instance.getStaffManager().getPrefix(player))
-                                    .replace("{message}", message.toString()
-                                            .replace("ForumsManager", "Forums-Manager")
-                                            .replace("StaffManager", "Staff-Manager")
-                                            .replace("SupportManager", "Support-Manager")
-                                            .replace("OperationsManager", "Operations")));
+                                    .replace("{rank}", this.instance.getStaffManager().getPrefix(player)
+                                            .replace("ForumsManager", "Forums Manager")
+                                            .replace("StaffManager", "Staff Manager")
+                                            .replace("SupportManager", "Support Manager")
+                                            .replace("OperationsManager", "Operations"))
+                                    .replace("{message}", message.toString()));
                     }
                 }
             } else {

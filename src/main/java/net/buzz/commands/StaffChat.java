@@ -18,6 +18,9 @@ public class StaffChat extends Command {
         if (sender instanceof ProxiedPlayer) {
             ProxiedPlayer player = (ProxiedPlayer) sender;
             if (sender.hasPermission("opcraft.staff")) {
+                if (AdminToggle.stoggle.contains(player)) {
+                    return;
+                }
                 if (args.length == 0) {
                     sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("StaffChat.usage")));
                 } else {
@@ -33,16 +36,44 @@ public class StaffChat extends Command {
                         b++;
                     }
                     for (ProxiedPlayer online : this.instance.getProxy().getPlayers()) {
-                        if (online.hasPermission("opcraft.staff"))
+                        if (AdminToggle.stoggle.contains(online)) {
+                            return;
+                        }
+                        if (online.hasPermission("opcraft.staff")) {
+                            if (message.toString().contains("!")) {
+                                online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("StaffChat.format"))
+                                        .replace("{player}", player.getName())
+                                        .replace("{server}", player.getServer().getInfo().getName())
+                                        .replace("{rank}", this.instance.getStaffManager().getPrefix(player)
+                                                .replace("StaffManager", "Staff Manager")
+                                                .replace("SupportManager", "Support Manager")
+                                                .replace("ForumsManager", "Forums Manager")
+                                                .replace("OperationsManager", "Operations"))
+                                        .replace("{message}", message.toString()));
+                            }
+                        }
+                    }
+
+                    if (AdminToggle.stoggle.contains(player)) {
+                        return;
+                    }
+                    for (ProxiedPlayer online : this.instance.getProxy().getPlayers()) {
+                        if (AdminToggle.stoggle.contains(online)) {
+                            player.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("AdminToggle.UsedToggled"))
+                                    .replace("{mode}", "Staff Chat"));
+                            return;
+                        }
+                        if (online.hasPermission("opcraft.staff")) {
                             online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("StaffChat.format"))
                                     .replace("{player}", player.getName())
                                     .replace("{server}", player.getServer().getInfo().getName())
-                                    .replace("{rank}", this.instance.getStaffManager().getPrefix(player))
-                                    .replace("{message}", message.toString())
-                                    .replace("ForumsManager", "Forums-Manager")
-                                    .replace("StaffManager", "Staff-Manager")
-                                    .replace("SupportManager", "Support-Manager")
-                                    .replace("OperationsManager", "Operations"));
+                                    .replace("{rank}", this.instance.getStaffManager().getPrefix(player)
+                                            .replace("StaffManager", "Staff Manager")
+                                            .replace("SupportManager", "Support Manager")
+                                            .replace("ForumsManager", "Forums Manager")
+                                            .replace("OperationsManager", "Operations"))
+                                    .replace("{message}", message.toString()));
+                        }
                     }
                 }
             } else {

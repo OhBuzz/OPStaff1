@@ -24,8 +24,6 @@ public class StaffManager implements Closeable {
 
     private Map<UUID, Long> loginTimes;
 
-    public int value;
-
     public StaffManager(OPStaff instance) {
         this.instance = instance;
         this.hidden = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -64,11 +62,11 @@ public class StaffManager implements Closeable {
                     continue;
                 if (this.instance.getStaffManager().isHidden(player.getUniqueId()))
                     continue;
-                Set<String> userGroups = (Set<String>)user.getNodes().stream().filter(NodeType.INHERITANCE::matches).map(NodeType.INHERITANCE::cast).map(InheritanceNode::getGroupName).collect(Collectors.toSet());
+                Set<String> userGroups = user.getNodes().stream().filter(NodeType.INHERITANCE::matches).map(NodeType.INHERITANCE::cast).map(InheritanceNode::getGroupName).collect(Collectors.toSet());
                 if (!userGroups.contains(group.getName()))
                     continue;
                 Map<Group, Set<User>> staff = servers.computeIfAbsent(serverName, k -> new LinkedHashMap<>());
-                ((Set<User>)staff.computeIfAbsent(group, k -> new LinkedHashSet())).add(user);
+                staff.computeIfAbsent(group, k -> new LinkedHashSet()).add(user);
             }
         }
         return servers;

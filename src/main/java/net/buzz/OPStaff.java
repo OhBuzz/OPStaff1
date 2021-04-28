@@ -1,5 +1,6 @@
 package net.buzz;
 
+import net.buzz.commands.AdminToggle;
 import net.buzz.commands.SeniorStaffChat;
 import net.buzz.commands.Staff;
 import net.buzz.commands.StaffChat;
@@ -33,6 +34,7 @@ public final class OPStaff extends Plugin {
         getProxy().getPluginManager().registerCommand(this, (Command)new Staff(this));
         getProxy().getPluginManager().registerCommand(this, (Command)new StaffChat(this));
         getProxy().getPluginManager().registerCommand(this, (Command)new SeniorStaffChat(this));
+        getProxy().getPluginManager().registerCommand(this, (Command)new AdminToggle(this));
         getLogger().info("");
         getLogger().info("OPStaff has been successfully enabled!");
         getLogger().info("OPStaff made by buzz#9999");

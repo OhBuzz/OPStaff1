@@ -22,21 +22,6 @@ public class StaffListeners implements Listener {
     }
 
     @EventHandler
-    public void StaffConnect(ServerConnectEvent event) {
-        ProxiedPlayer player = event.getPlayer();
-            if(this.instance.toggle.contains(player)) {
-                return;
-            }
-            final boolean isStaff = player.hasPermission("opcraft.staff");
-            if(isStaff) {
-                ProxyServer.getInstance().getPlayers().forEach(online ->
-                        online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffConnect"))
-                        .replace("{user}", player.getName())
-                        .replace("{server}", String.valueOf(event.getTarget().getName()))));
-            }
-    }
-
-    @EventHandler
     public void StaffLeave(ServerDisconnectEvent event) {
         ProxiedPlayer player = event.getPlayer();
         if(this.instance.toggle.contains(player)) {
@@ -48,6 +33,24 @@ public class StaffListeners implements Listener {
                     online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffLeave"))
                             .replace("{user}", player.getName())
                             .replace("{server}", String.valueOf(event.getTarget().getName()))));
+        }
+    }
+
+    @EventHandler
+    public void StaffConnect(ServerConnectedEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+        if(this.instance.toggle.contains(player)) {
+            return;
+        }
+        final boolean isStaff = player.hasPermission("opcraft.staff");
+        if (!player.getPendingConnection().isConnected()) {
+            return;
+        }
+        if(isStaff) {
+            ProxyServer.getInstance().getPlayers().forEach(online ->
+                    online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffConnect"))
+                            .replace("{user}", player.getName())
+                            .replace("{server}", String.valueOf(event.getServer().getInfo().getName()))));
         }
     }
 

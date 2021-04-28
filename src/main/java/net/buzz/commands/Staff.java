@@ -13,7 +13,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -27,11 +26,12 @@ public class Staff extends Command {
         this.instance = instance;
     }
 
+
     public void execute(CommandSender sender, String[] args) {
         ProxiedPlayer p = (ProxiedPlayer)sender;
         if (args.length == 0) {
             if (!sender.hasPermission("opcraft.staff")) {
-                sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission"))));
+                sender.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission"))));
                 return;
             }
             int val = this.instance.getStaffManager().getServerStaff().size();
@@ -41,7 +41,7 @@ public class Staff extends Command {
             sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.title"))));
             sender.sendMessage((BaseComponent)new TextComponent(" "));
             for (String serverName : this.instance.getMainConfiguration().getStringList("servers")) {
-                Map<Group, Set<User>> serverMapEntry = (Map<Group, Set<User>>)this.instance.getStaffManager().getServerStaff().get(serverName);
+                Map<Group, Set<User>> serverMapEntry = this.instance.getStaffManager().getServerStaff().get(serverName);
                 sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.server")
                         .replace("{server}", serverName))
                         .replace("{COUNT}", String.valueOf(ProxyServer.getInstance().getServerInfo(serverName).getPlayers().size()))));
@@ -63,13 +63,15 @@ public class Staff extends Command {
                             continue;
                         long loginTime = this.instance.getStaffManager().getLoginTime(player.getUniqueId());
                         sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.staffMember")
-                                .replace("{rank}", metaData.getPrefix())
+                                .replace("{rank}", metaData.getPrefix()
+                                .replace(" ", "")
+                                .replace("-", " ")
+                                .replace("StaffManager", "Staff Manager")
+                                .replace("SupportManager", "Support Manager")
+                                .replace("ForumsManager", "Forums Manager")
+                                .replace("OperationsManager", "Operations"))
                                 .replace("{user}", player.getDisplayName())
-                                .replace("{playtime}", (loginTime > 0L) ? TimeUtil.formatDHMS(System.currentTimeMillis() - loginTime) : "N/A")
-                        .replace("ForumsManager", "Forums-Manager")
-                        .replace("StaffManager", "Staff-Manager")
-                        .replace("SupportManager", "Support-Manager")
-                        .replace("OperationsManager", "Operations"))));
+                                .replace("{playtime}", (loginTime > 0L) ? TimeUtil.formatDHMS(System.currentTimeMillis() - loginTime) : "N/A"))));
                     }
                 }
                 sender.sendMessage((BaseComponent)new TextComponent(" "));
