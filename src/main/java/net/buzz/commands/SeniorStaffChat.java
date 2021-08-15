@@ -6,8 +6,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-import java.util.ArrayList;
-
 public class SeniorStaffChat extends Command {
     private final OPStaff instance;
 
@@ -26,7 +24,7 @@ public class SeniorStaffChat extends Command {
                 if (args.length == 0) {
                     sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("SeniorChat.usage")));
                 } else {
-                    StringBuilder message = new StringBuilder("");
+                    StringBuilder message = new StringBuilder();
                     byte b;
                     int i;
                     String[] arrayOfString;

@@ -7,6 +7,7 @@ groups:
   - moderator
   - helper
 
+#server MUST to exist in bungeecord's config.yml or plugin WILL crash
 servers:
   - prison
   - hub

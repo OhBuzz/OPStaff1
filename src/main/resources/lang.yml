@@ -29,6 +29,6 @@ AdminToggle:
   ToggleSenior: "&8(&BAdminToggle&8) &aYou have {toggle} SeniorChat&a!"
   ToggleStaff: "&8(&BAdminToggle&8) &aYou have {toggle} StaffChat&a!"
   UsedToggled: "&c[!] You cannot send messages in {mode} while you have it toggled!"
-  Usage: "&cUsage: /optoggle (senior | staff | both)"
+  Usage: "&cUsage: /optoggle (senior | staff)"
 
 configReloaded: "&8(&aStaff&8) &cYou have successfully reloaded the configuration."

@@ -11,7 +11,6 @@ import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -28,95 +27,94 @@ public class Staff extends Command {
 
 
     public void execute(CommandSender sender, String[] args) {
-        ProxiedPlayer p = (ProxiedPlayer)sender;
-        if (args.length == 0) {
-            if (!sender.hasPermission("opcraft.staff")) {
-                sender.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission"))));
-                return;
-            }
-            int val = this.instance.getStaffManager().getServerStaff().size();
-            String num = Integer.toString(val);
-            LuckPerms api = LuckPermsProvider.get();
-            sender.sendMessage((BaseComponent)new TextComponent(" "));
-            sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.title"))));
-            sender.sendMessage((BaseComponent)new TextComponent(" "));
-            for (String serverName : this.instance.getMainConfiguration().getStringList("servers")) {
-                Map<Group, Set<User>> serverMapEntry = this.instance.getStaffManager().getServerStaff().get(serverName);
-                sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.server")
-                        .replace("{server}", serverName))
-                        .replace("{COUNT}", String.valueOf(ProxyServer.getInstance().getServerInfo(serverName).getPlayers().size()))));
-                if (serverMapEntry == null || serverMapEntry.isEmpty()) {
-                    sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.NoneOnline"))));
-                    sender.sendMessage((BaseComponent)new TextComponent(" "));
-                    continue;
+        if (sender instanceof ProxiedPlayer) {
+            ProxiedPlayer p = (ProxiedPlayer) sender;
+            if (args.length == 0) {
+                if (!sender.hasPermission("opcraft.staff")) {
+                    sender.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission"))));
+                    return;
                 }
-                for (Map.Entry<Group, Set<User>> groupSetEntry : serverMapEntry.entrySet()) {
-                    for (User user : groupSetEntry.getValue()) {
-                        Optional<QueryOptions> queryOptions = api.getContextManager().getQueryOptions(user);
-                        if (!queryOptions.isPresent())
-                            continue;
-                        CachedMetaData metaData = ((Group)groupSetEntry.getKey()).getCachedData().getMetaData(queryOptions.get());
-                        if (metaData == null)
-                            continue;
-                        ProxiedPlayer player = this.instance.getProxy().getPlayer(user.getUniqueId());
-                        if (player == null)
-                            continue;
-                        long loginTime = this.instance.getStaffManager().getLoginTime(player.getUniqueId());
-                        sender.sendMessage((BaseComponent)new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.staffMember")
-                                .replace("{rank}", metaData.getPrefix()
-                                .replace(" ", "")
-                                .replace("-", " ")
-                                .replace("StaffManager", "Staff Manager")
-                                .replace("SupportManager", "Support Manager")
-                                .replace("ForumsManager", "Forums Manager")
-                                .replace("OperationsManager", "Operations"))
-                                .replace("{user}", player.getDisplayName())
-                                .replace("{playtime}", (loginTime > 0L) ? TimeUtil.formatDHMS(System.currentTimeMillis() - loginTime) : "N/A"))));
+                LuckPerms api = LuckPermsProvider.get();
+                sender.sendMessage(new TextComponent(" "));
+                sender.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.title"))));
+                sender.sendMessage(new TextComponent(" "));
+                for (String serverName : this.instance.getMainConfiguration().getStringList("servers")) {
+                    Map<Group, Set<User>> serverMapEntry = this.instance.getStaffManager().getServerStaff().get(serverName);
+                    sender.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.server")
+                            .replace("{server}", serverName))
+                            .replace("{COUNT}", String.valueOf(ProxyServer.getInstance().getServerInfo(serverName).getPlayers().size()))));
+                    if (serverMapEntry == null || serverMapEntry.isEmpty()) {
+                        sender.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.NoneOnline"))));
+                        sender.sendMessage(new TextComponent(" "));
+                        continue;
                     }
+                    for (Map.Entry<Group, Set<User>> groupSetEntry : serverMapEntry.entrySet()) {
+                        for (User user : groupSetEntry.getValue()) {
+                            Optional<QueryOptions> queryOptions = api.getContextManager().getQueryOptions(user);
+                            if (!queryOptions.isPresent())
+                                continue;
+                            CachedMetaData metaData = groupSetEntry.getKey().getCachedData().getMetaData(queryOptions.get());
+                            ProxiedPlayer player = this.instance.getProxy().getPlayer(user.getUniqueId());
+                            if (player == null)
+                                continue;
+                            long loginTime = this.instance.getStaffManager().getLoginTime(player.getUniqueId());
+                            sender.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Staff.staffMember")
+                                    .replace("{rank}", Objects.requireNonNull(metaData.getPrefix())
+                                            .replace(" ", "")
+                                            .replace("-", " ")
+                                            .replace("StaffManager", "Staff Manager")
+                                            .replace("SupportManager", "Support Manager")
+                                            .replace("ForumsManager", "Forums Manager")
+                                            .replace("OperationsManager", "Operations"))
+                                    .replace("{user}", player.getDisplayName())
+                                    .replace("{playtime}", (loginTime > 0L) ? TimeUtil.formatDHMS(System.currentTimeMillis() - loginTime) : "N/A"))));
+                        }
+                    }
+                    sender.sendMessage(new TextComponent(" "));
                 }
-                sender.sendMessage((BaseComponent)new TextComponent(" "));
-            }
-        } else if (args[0].equalsIgnoreCase("hide")) {
-            if (!sender.hasPermission("opcraft.admin")) {
-                sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission")));
-                return;
-            }
-            UUID uuid = ((ProxiedPlayer)sender).getUniqueId();
-            if (this.instance.getStaffManager().isHidden(uuid)) {
-                this.instance.getStaffManager().removeHidden(uuid);
-                sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("StaffHide.Hide")
-                .replace("{toggle}", "enabled")));
-            } else {
-                this.instance.getStaffManager().addHidden(uuid);
-                sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("StaffHide.Hide")
-                .replace("{toggle}", "disabled")));
-            }
-        } else if (args[0].equalsIgnoreCase("reload")) {
-            if (!sender.hasPermission("opcraft.owner")) {
-                sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission")));
-                return;
-            }
-            this.instance.loadConfigurations();
-            sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("configReloaded")));
-        } else if (args[0].equalsIgnoreCase("toggle")) {
-            if (sender.hasPermission("opcraft.admin")) {
-                if (!this.instance.toggle.contains(p)) {
-                    this.instance.toggle.add(p);
-                    p.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.toggle")
-                    .replace("{toggle}", "disabled")));
+            } else if (args[0].equalsIgnoreCase("hide")) {
+                if (!sender.hasPermission("opcraft.admin")) {
+                    sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission")));
+                    return;
+                }
+                UUID uuid = ((ProxiedPlayer) sender).getUniqueId();
+                if (this.instance.getStaffManager().isHidden(uuid)) {
+                    this.instance.getStaffManager().removeHidden(uuid);
+                    sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("StaffHide.Hide")
+                            .replace("{toggle}", "enabled")));
                 } else {
-                    if (this.instance.toggle.contains(p)) {
-                        this.instance.toggle.remove(p);
+                    this.instance.getStaffManager().addHidden(uuid);
+                    sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("StaffHide.Hide")
+                            .replace("{toggle}", "disabled")));
+                }
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                if (!sender.hasPermission("opcraft.owner")) {
+                    sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission")));
+                    return;
+                }
+                this.instance.loadConfigurations();
+                sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("configReloaded")));
+            } else if (args[0].equalsIgnoreCase("toggle")) {
+                if (sender.hasPermission("opcraft.admin")) {
+                    if (!this.instance.toggle.contains(p)) {
+                        this.instance.toggle.add(p);
                         p.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.toggle")
-                        .replace("{toggle}", "enabled")));
+                                .replace("{toggle}", "disabled")));
+                    } else {
+                        if (this.instance.toggle.contains(p)) {
+                            this.instance.toggle.remove(p);
+                            p.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.toggle")
+                                    .replace("{toggle}", "enabled")));
+                        }
                     }
+                } else {
+                    sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission")));
                 }
             } else {
-                sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.NoPermission")));
+                sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.invalidUsage")));
             }
         } else {
-            sender.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Errors.invalidUsage")));
+            sender.sendMessage("You must be in game to do this!");
         }
-
     }
 }

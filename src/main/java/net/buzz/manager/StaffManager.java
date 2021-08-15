@@ -1,13 +1,13 @@
 package net.buzz.manager;
 
-import net.luckperms.api.node.NodeType;
 import net.buzz.OPStaff;
+import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
+import net.luckperms.api.node.NodeType;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.query.QueryOptions;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.io.Closeable;
@@ -15,14 +15,12 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import net.luckperms.api.LuckPerms;
-
 public class StaffManager implements Closeable {
     private final OPStaff instance;
 
-    private Set<UUID> hidden;
+    private final Set<UUID> hidden;
 
-    private Map<UUID, Long> loginTimes;
+    private final Map<UUID, Long> loginTimes;
 
     public StaffManager(OPStaff instance) {
         this.instance = instance;
@@ -35,7 +33,8 @@ public class StaffManager implements Closeable {
         User user = api.getUserManager().getUser(player.getUniqueId());
         try {
             QueryOptions queryOptions = api.getContextManager().getQueryOptions(player);
-            return user.getCachedData().getMetaData(queryOptions).getPrefix()
+            assert user != null;
+            return Objects.requireNonNull(user.getCachedData().getMetaData(queryOptions).getPrefix())
                     .replace(" ", "")
                     .replace("]", "")
                     .replace("[", "")
@@ -87,11 +86,11 @@ public class StaffManager implements Closeable {
     }
 
     public void addLoginTime(UUID uuid) {
-        this.loginTimes.put(uuid, Long.valueOf(System.currentTimeMillis()));
+        this.loginTimes.put(uuid, System.currentTimeMillis());
     }
 
     public long getLoginTime(UUID uuid) {
-        return (Long) this.loginTimes.getOrDefault(uuid, Long.valueOf(0L));
+        return this.loginTimes.getOrDefault(uuid, 0L);
     }
 
     public void removeLoginTime(UUID uuid) {

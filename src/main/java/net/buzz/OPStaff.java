@@ -7,8 +7,6 @@ import net.buzz.commands.StaffChat;
 import net.buzz.listener.StaffListeners;
 import net.buzz.manager.StaffManager;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -30,11 +28,11 @@ public final class OPStaff extends Plugin {
     public ArrayList<ProxiedPlayer> toggle = new ArrayList<>();
 
     public void onEnable() {
-        getProxy().getPluginManager().registerListener(this, (Listener)new StaffListeners(this));
-        getProxy().getPluginManager().registerCommand(this, (Command)new Staff(this));
-        getProxy().getPluginManager().registerCommand(this, (Command)new StaffChat(this));
-        getProxy().getPluginManager().registerCommand(this, (Command)new SeniorStaffChat(this));
-        getProxy().getPluginManager().registerCommand(this, (Command)new AdminToggle(this));
+        getProxy().getPluginManager().registerListener(this, new StaffListeners(this));
+        getProxy().getPluginManager().registerCommand(this, new Staff(this));
+        getProxy().getPluginManager().registerCommand(this, new StaffChat(this));
+        getProxy().getPluginManager().registerCommand(this, new SeniorStaffChat(this));
+        getProxy().getPluginManager().registerCommand(this, new AdminToggle(this));
         getLogger().info("");
         getLogger().info("OPStaff has been successfully enabled!");
         getLogger().info("OPStaff made by buzz#9999");

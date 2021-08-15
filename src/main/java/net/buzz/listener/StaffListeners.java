@@ -3,6 +3,7 @@ package net.buzz.listener;
 import net.buzz.OPStaff;
 import net.buzz.util.ChatUtil;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
@@ -22,37 +23,66 @@ public class StaffListeners implements Listener {
     }
 
     @EventHandler
-    public void StaffLeave(ServerDisconnectEvent event) {
-        ProxiedPlayer player = event.getPlayer();
-        if(this.instance.toggle.contains(player)) {
-            return;
-        }
-        final boolean isStaff = player.hasPermission("opcraft.staff");
-        if(isStaff) {
-            ProxyServer.getInstance().getPlayers().forEach(online ->
-                    online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffLeave"))
-                            .replace("{user}", player.getName())
-                            .replace("{server}", String.valueOf(event.getTarget().getName()))));
+    public void StaffLeave(ServerConnectedEvent event) {
+        ProxiedPlayer p = event.getPlayer();
+        try {
+            for (ProxiedPlayer online : ProxyServer.getInstance().getPlayers()) {
+                if (p.hasPermission("opcraft.staff") && (online.hasPermission("opcraft.staff")))
+                    online.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffLeave"))
+                            .replace("{user}", event.getPlayer().getName())
+                            .replace("{server}", p.getServer().getInfo().getName())));
+                            //.replace("{server}", event.getPlayer().getServer().getInfo().getName())));
+            }
+        } catch (NullPointerException a) {
+            a.printStackTrace();
         }
     }
 
     @EventHandler
-    public void StaffConnect(ServerConnectedEvent event) {
-        ProxiedPlayer player = event.getPlayer();
-        if(this.instance.toggle.contains(player)) {
-            return;
-        }
-        final boolean isStaff = player.hasPermission("opcraft.staff");
-        if (!player.getPendingConnection().isConnected()) {
-            return;
-        }
-        if(isStaff) {
-            ProxyServer.getInstance().getPlayers().forEach(online ->
-                    online.sendMessage(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffConnect"))
-                            .replace("{user}", player.getName())
-                            .replace("{server}", String.valueOf(event.getServer().getInfo().getName()))));
+    public void StaffJoin2(ServerSwitchEvent event) {
+        ProxiedPlayer p = event.getPlayer();
+        try {
+            for (ProxiedPlayer online : ProxyServer.getInstance().getPlayers()) {
+                if (p.hasPermission("opcraft.staff") && online.hasPermission("opcraft.staff"))
+                    online.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffConnect"))
+                            .replace("{user}", event.getPlayer().getName())
+                            .replace("{server}", p.getServer().getInfo().getName())));
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
+
+//    @EventHandler
+//    public void StaffLeave(ServerDisconnectEvent event) {
+//        ProxiedPlayer p = event.getPlayer();
+//        try {
+//            for (ProxiedPlayer online : ProxyServer.getInstance().getPlayers()) {
+//                if (p.hasPermission("opcraft.staff") && (online.hasPermission("opcraft.staff")))
+//                    online.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffLeave"))
+//                            .replace("{user}", p.getName())
+//                            .replace("{server}", String.valueOf(event.getTarget().getName()))));
+//            }
+//        } catch (NullPointerException a) {
+//            a.printStackTrace();
+//        }
+//    }
+
+//    @EventHandler
+//    public void StaffJoin(ServerSwitchEvent event) {
+//        ProxiedPlayer p = event.getPlayer();
+//        try {
+//            for (ProxiedPlayer online : ProxyServer.getInstance().getPlayers()) {
+//                if (p.hasPermission("opcraft.staff") && (online.hasPermission("opcraft.staff")))
+//                    online.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffConnect"))
+//                            .replace("{user}", p.getName())
+//                            .replace("{server}", String.valueOf(p.getServer().getInfo().getName()))));
+//            }
+//        } catch (NullPointerException a) {
+//            a.printStackTrace();
+//            System.err.format("IOException: %s%n", a);
+//        }
+//    }
 
     @EventHandler
     public void  onPlayerDisconnect(PlayerDisconnectEvent event) {
