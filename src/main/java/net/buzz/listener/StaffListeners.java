@@ -25,7 +25,6 @@ public class StaffListeners implements Listener {
     @EventHandler
     public void StaffLeave(ServerConnectedEvent event) {
         ProxiedPlayer p = event.getPlayer();
-        try {
             for (ProxiedPlayer online : ProxyServer.getInstance().getPlayers()) {
                 if (p.hasPermission("opcraft.staff") && (online.hasPermission("opcraft.staff")))
                     online.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffLeave"))
@@ -33,24 +32,17 @@ public class StaffListeners implements Listener {
                             .replace("{server}", p.getServer().getInfo().getName())));
                             //.replace("{server}", event.getPlayer().getServer().getInfo().getName())));
             }
-        } catch (NullPointerException a) {
-            a.printStackTrace();
-        }
     }
 
     @EventHandler
     public void StaffJoin2(ServerSwitchEvent event) {
         ProxiedPlayer p = event.getPlayer();
-        try {
             for (ProxiedPlayer online : ProxyServer.getInstance().getPlayers()) {
                 if (p.hasPermission("opcraft.staff") && online.hasPermission("opcraft.staff"))
                     online.sendMessage(new TextComponent(ChatUtil.colorize(this.instance.getLanguageConfiguration().getString("Events.staffConnect"))
                             .replace("{user}", event.getPlayer().getName())
                             .replace("{server}", p.getServer().getInfo().getName())));
             }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
     }
 
 //    @EventHandler
