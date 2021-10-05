@@ -1,14 +1,17 @@
 groups:
   - owner
-  - co-owner
-  - manager
   - developer
+  - staffmanager
+  - forumsmanager
+  - supportmanager
+  - communitymanager
+  - advisor
+  - sradmin
   - admin
-  - moderator
+  - srmod
+  - mod
   - helper
 
 #server MUST to exist in bungeecord's config.yml or plugin WILL crash
 servers:
-  - prison
-  - hub
-  - dev
+  - opfactions
